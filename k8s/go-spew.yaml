@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: go-spew
-        image: docker-registry.acorn.cirrostratus.org/playground/go-spew@sha256:2c4e7fc81ed27116ceaba23eb89c119d7842f89e8b0051c2694f59ac56b4a71c
+        image: stevenacoffman/go_spew
         env:
         - name: APP_NAME
           value: go-spew

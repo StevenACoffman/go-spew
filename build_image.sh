@@ -42,10 +42,9 @@ upx --brute main
 # Building with musl on alpine:
 # CC=/usr/local/musl/bin/musl-gcc go build --ldflags '-linkmode external -extldflags "-static"' main.go
 
-IMAGE_NAME=go-spew
-REPOSITORY_NAMESPACE=${1:-playground}
-REGISTRY="docker-registry.acorn.cirrostratus.org"
-REPOSITORY="${REGISTRY}/${REPOSITORY_NAMESPACE}/${IMAGE_NAME}"
+IMAGE_NAME=go_spew
+REPOSITORY_NAMESPACE=${1:-stevenacoffman}
+REPOSITORY="${REPOSITORY_NAMESPACE}/${IMAGE_NAME}"
 # A docker tag name must be valid ASCII and may contain lowercase and uppercase letters,
 # digits, underscores, periods and dashes.
 # A docker tag name may not start with a period or a dash and may contain a maximum of 128 characters.
