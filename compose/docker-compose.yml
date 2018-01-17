@@ -14,7 +14,6 @@ services:
       - ~/Downloads:/var/run/secrets/kubernetes.io/serviceaccount
     environment:
       - APP_NAME=go-spew
-      - SERVICE_NAME=search-service-k8s
     tty: true
 volumes:
     notused:
