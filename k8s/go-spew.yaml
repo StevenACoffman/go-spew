@@ -1,0 +1,42 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: go-spew
+spec:
+  selector:
+    matchLabels:
+      app: go-spew
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: go-spew
+        logstream: go-spew
+    spec:
+      containers:
+      - name: go-spew
+        image: docker-registry.acorn.cirrostratus.org/playground/go-spew@sha256:2c4e7fc81ed27116ceaba23eb89c119d7842f89e8b0051c2694f59ac56b4a71c
+        env:
+        - name: APP_NAME
+          value: go-spew
+        - name: INTERVAL
+          value: 30
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: seq-base
+              key: sequoia.environment
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: HOST_IP_ADDRESS
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP

@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        GIT_COMMIT: "${GIT_COMMIT}"
+        GIT_BRANCH: "${GIT_BRANCH}"
+        BUILD_TIME: "${BUILD_TIME}"
+    image: docker-registry.acorn.cirrostratus.org/playground/go-eureka
+    volumes:
+      - ~/Downloads:/var/run/secrets/kubernetes.io/serviceaccount
+    environment:
+      - APP_NAME=hello-from-kubey
+      - SERVICE_NAME=search-service-k8s
+      - KUBERNETES_SERVICE_HOST=api.k8s-cluster.test.cirrostratus.org
+      - NAMESPACE=teachers
+      - ENVIRONMENT=test
+      - HOST_IP_ADDRESS=172.28.147.108
+      - EUREKA_START_STATUS=STARTING
+      - HEALTHCHECK_URI=/am_i_happy
+    tty: true
+volumes:
+    notused:
