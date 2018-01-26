@@ -29,7 +29,7 @@ import (
 var isDebug bool
 
 func init() {
-	isDebug,_ := strconv.ParseBool(os.Getenv("DEBUG"))
+	isDebug,_ = strconv.ParseBool(os.Getenv("DEBUG"))
 }
 
 func check(err error) {
