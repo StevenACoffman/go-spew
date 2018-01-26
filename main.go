@@ -22,8 +22,15 @@ import (
 
 	"github.com/satori/go.uuid"
 	"strconv"
+	"strings"
+	"unicode"
 )
 
+var isDebug bool
+
+func init() {
+	isDebug,_ := strconv.ParseBool(os.Getenv("DEBUG"))
+}
 
 func check(err error) {
 	if err != nil {
@@ -63,8 +70,13 @@ func makePayload(data map[string]string) string {
 		panic(err)
 	}
 	payload := buf.String()
+	return strings.Map(func(r rune) rune {
+		if unicode.IsSpace(r) {
+			return -1
+		}
+		return r
+	}, payload)
 
-	return payload
 }
 
 func makeData(timeStampMicros int64) map[string]string {
@@ -80,9 +92,11 @@ func makeData(timeStampMicros int64) map[string]string {
 		"ENVIRONMENT":             kubernetesEnv,
 		"TIMESTAMP_USEC": strconv.FormatInt(timeStampMicros, 10),
 	}
-	fmt.Println("Configuration:")
-	for key, value := range data {
-		fmt.Println("Key:", key, "Value:", value)
+	if isDebug {
+		fmt.Println("Configuration:")
+		for key, value := range data {
+			fmt.Println("Key:", key, "Value:", value)
+		}
 	}
 	return data
 }
@@ -108,7 +122,9 @@ func main() {
 	go func() {
 		for t := range ticker.C {
 			// Nanosecond / 1,000 = microsecpmds
-			fmt.Println("Tick at", t)
+			if isDebug {
+				fmt.Println("Tick at", t)
+			}
 			payload = makePayload(makeData(t.UnixNano() / 1000))
 			fmt.Println(payload)
 		}
