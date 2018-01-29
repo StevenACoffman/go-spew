@@ -59,7 +59,7 @@ func makePayload(data map[string]string) string {
   },
   "eventid": "{{.EVENT_ID}}",
   "requestid": "{{.REQUEST_ID}}",
-  "origin": "local-pirate.{{.ENVIRONMENT}}",
+  "origin": "local-pirate-spew.{{.ENVIRONMENT}}",
   "eventtype": "foo",
   "tstamp_usec": "{{.TIMESTAMP_USEC}}"
 }`
