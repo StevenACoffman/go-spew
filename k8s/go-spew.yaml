@@ -25,11 +25,6 @@ spec:
           value: "30"
         - name: DEBUG
           value: "false"
-        - name: ENVIRONMENT
-          valueFrom:
-            configMapKeyRef:
-              name: seq-base
-              key: sequoia.environment
         - name: NAMESPACE
           valueFrom:
             fieldRef:
