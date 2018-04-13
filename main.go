@@ -51,7 +51,7 @@ func makePayload(data map[string]string) string {
   "origin": "watermark.{{.ENVIRONMENT}}",
   "eventtype": "watermark",
   "tstamp_usec": {{.TIMESTAMP_USEC}},
-  "node_name": {{.NODE_NAME}}
+  "node_name": "{{.NODE_NAME}}"
 }`
 
 	t := template.Must(template.New("payload").Parse(payloadTmpl))
