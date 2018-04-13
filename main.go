@@ -44,16 +44,14 @@ func makePayload(data map[string]string) string {
 	const payloadTmpl = `
 {
   "dests": [
-    "k8s-pirate-message"
+    "k8s-fluent-bit-watermark"
   ],
-  "_lb0": {
-    "k8s-pirate-message": "{{.LOG_BUFFER_PARTITION}}"
-  },
   "eventid": "{{.EVENT_ID}}",
   "requestid": "{{.REQUEST_ID}}",
-  "origin": "local-pirate-spew.{{.ENVIRONMENT}}",
-  "eventtype": "foo",
-  "tstamp_usec": {{.TIMESTAMP_USEC}}
+  "origin": "watermark.{{.ENVIRONMENT}}",
+  "eventtype": "watermark",
+  "tstamp_usec": {{.TIMESTAMP_USEC}},
+  "node_name": {{.NODE_NAME}}
 }`
 
 	t := template.Must(template.New("payload").Parse(payloadTmpl))
@@ -73,16 +71,15 @@ func makePayload(data map[string]string) string {
 
 func makeData(timeStampMicros int64) map[string]string {
 	eventId, _ := uuid.NewV4()
-	logBufferPartition, _ := uuid.NewV4()
 	requestId, _ := uuid.NewV4()
 	kubernetesEnv := getEnv("ENVIRONMENT", "test")
-
+	nodeNameEnv := getEnv("NODE_NAME", "unknown")
 	data := map[string]string{
-		"LOG_BUFFER_PARTITION":                logBufferPartition.String(),
 		"EVENT_ID":            eventId.String(),
 		"REQUEST_ID":            requestId.String(),
 		"ENVIRONMENT":             kubernetesEnv,
 		"TIMESTAMP_USEC": strconv.FormatInt(timeStampMicros, 10),
+		"NODE_NAME": nodeNameEnv,
 	}
 	if isDebug {
 		fmt.Println("Configuration:")
