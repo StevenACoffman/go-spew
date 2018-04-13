@@ -14,6 +14,10 @@ spec:
       labels:
         app: go-spew
         logstream: go-spew
+      annotations:
+        logging.parser: json
+        fluentbit.io/parser: json
+        logging.topic: k8s-beacon
     spec:
       containers:
       - name: go-spew

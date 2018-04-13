@@ -32,14 +32,6 @@ func init() {
 	isDebug,_ = strconv.ParseBool(os.Getenv("DEBUG"))
 }
 
-func check(err error) {
-	if err != nil {
-		fmt.Printf("Error: %+v. \n", err)
-		//os.Exit(1)
-		panic(err)
-	}
-}
-
 func getEnv(key, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
@@ -61,7 +53,7 @@ func makePayload(data map[string]string) string {
   "requestid": "{{.REQUEST_ID}}",
   "origin": "local-pirate-spew.{{.ENVIRONMENT}}",
   "eventtype": "foo",
-  "tstamp_usec": "{{.TIMESTAMP_USEC}}"
+  "tstamp_usec": {{.TIMESTAMP_USEC}}
 }`
 
 	t := template.Must(template.New("payload").Parse(payloadTmpl))
