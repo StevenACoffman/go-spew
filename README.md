@@ -1,6 +1,6 @@
 # Go Spew
 
-This is a dumb container that randomly generates and emits structured log messages on a regular interval for testing a log pipeline.
+This is a dumb container that randomly generates and emits structured log messages on a regular interval for testing a log pipeline. This is useful for watermarking in kafka topics
 
 ## How to run it in kubernetes
 
