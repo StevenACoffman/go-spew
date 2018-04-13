@@ -12,18 +12,15 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
-	"text/template"
 	"time" // or "runtime"
 
 	"github.com/satori/go.uuid"
 	"strconv"
-	"strings"
-	"unicode"
+	"encoding/json"
 )
 
 var isDebug bool
@@ -40,54 +37,33 @@ func getEnv(key, fallback string) string {
 }
 
 
-func makePayload(data map[string]string) string {
-	const payloadTmpl = `
-{
-  "dests": [
-    "k8s-fluent-bit-watermark"
-  ],
-  "eventid": "{{.EVENT_ID}}",
-  "requestid": "{{.REQUEST_ID}}",
-  "origin": "watermark.{{.ENVIRONMENT}}",
-  "eventtype": "watermark",
-  "tstamp_usec": {{.TIMESTAMP_USEC}},
-  "node_name": "{{.NODE_NAME}}"
-}`
-
-	t := template.Must(template.New("payload").Parse(payloadTmpl))
-	buf := &bytes.Buffer{}
-	if err := t.Execute(buf, data); err != nil {
-		panic(err)
-	}
-	payload := buf.String()
-	return strings.Map(func(r rune) rune {
-		if unicode.IsSpace(r) {
-			return -1
-		}
-		return r
-	}, payload)
-
+type IthakaStructuredLogMessage struct {
+	EventType  string   `json:"eventtype,omitempty"`
+	EventId    string   `json:"eventid,omitempty"`
+	Origin     string   `json:"origin,omitempty"`
+	RequestId  string   `json:"requestid,omitempty"`
+	//Sometimes an int64, sometimes a string, json.Number is either
+	TstampUsec int64    `json:"tstamp_usec,omitempty"`
+	Dests      []string `json:"dests,omitempty"`
+	NodeName   string   `json:"node_name,omitempty"`
 }
 
-func makeData(timeStampMicros int64) map[string]string {
+func makeMessage(environment string, nodeName string, timestampMicros int64) string {
+	var payload IthakaStructuredLogMessage
+
 	eventId, _ := uuid.NewV4()
 	requestId, _ := uuid.NewV4()
-	kubernetesEnv := getEnv("ENVIRONMENT", "test")
-	nodeNameEnv := getEnv("NODE_NAME", "unknown")
-	data := map[string]string{
-		"EVENT_ID":            eventId.String(),
-		"REQUEST_ID":            requestId.String(),
-		"ENVIRONMENT":             kubernetesEnv,
-		"TIMESTAMP_USEC": strconv.FormatInt(timeStampMicros, 10),
-		"NODE_NAME": nodeNameEnv,
-	}
-	if isDebug {
-		fmt.Println("Configuration:")
-		for key, value := range data {
-			fmt.Println("Key:", key, "Value:", value)
-		}
-	}
-	return data
+
+
+	payload.Dests = []string{ "k8s-fluent-bit-watermark"}
+	payload.EventId = eventId.String()
+	payload.RequestId = requestId.String()
+	payload.Origin = "watermark."+environment
+	payload.EventType = "watermark"
+	payload.TstampUsec = timestampMicros
+	payload.NodeName  = nodeName
+	str, _ := json.Marshal(payload)
+	return string(str)
 }
 
 func main() {
@@ -97,6 +73,9 @@ func main() {
 	// notify us when the program can exit).
 	sigs := make(chan os.Signal, 2)
 	done := make(chan bool, 1)
+
+	kubernetesEnv := getEnv("ENVIRONMENT", "test")
+	nodeNameEnv := getEnv("NODE_NAME", "unknown")
 
 	interval, _ := strconv.Atoi(getEnv("INTERVAL", "30"))
 
@@ -114,7 +93,7 @@ func main() {
 			if isDebug {
 				fmt.Println("Tick at", t)
 			}
-			payload = makePayload(makeData(t.UnixNano() / 1000))
+			payload = makeMessage(kubernetesEnv, nodeNameEnv, t.UnixNano() / 1000)
 			fmt.Println(payload)
 		}
 	}()
