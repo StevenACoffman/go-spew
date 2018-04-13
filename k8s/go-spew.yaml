@@ -17,11 +17,11 @@ spec:
       annotations:
         logging.parser: json
         fluentbit.io/parser: json
-        logging.topic: k8s-beacon
+        logging.topic: k8s-watermark
     spec:
       containers:
       - name: go-spew
-        image: stevenacoffman/go_spew@sha256:c3e8727a3b9fe036420519708345919f2a7c5b4f1488c79afb2e29779a996af6
+        image: stevenacoffman/go_spew@sha256:906cb5de62753d531d5b55931759f88166ab22bb67f606eb5cb108006224ff09
         env:
         - name: APP_NAME
           value: go-spew
