@@ -61,19 +61,4 @@ docker build \
     --build-arg "GIT_COMMIT=${GIT_REVISION}" \
     -f Dockerfile .
 
-echo "export GIT_BRANCH=${GIT_BRANCH}" > .buildbits
-echo "export BUILD_TIME=${BUILD_TIME}" >> .buildbits
-echo "export GIT_COMMIT=${GIT_REVISION}" >> .buildbits
-echo Check if git status is clean
-#Check if git status is clean
-git diff-index --quiet HEAD --
-
-ret_code="$?"
-if [ $ret_code != 0 ]; then
-  printf "You have uncommitted code. Local docker image was built, but please commit before tagging and pushing. "
-  exit $ret_code
-else
-    echo "pushing ${REPOSITORY}:SHA1-${GIT_REVISION}"
-    # See https://stackoverflow.com/questions/31647843/labelling-images-in-docker
-    docker push "${REPOSITORY}:SHA1-${GIT_REVISION}"
-fi
+docker push "${REPOSITORY}"
