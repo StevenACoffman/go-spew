@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: go-spew
-        image: stevenacoffman/go_spew@sha256:af0889dfbba33820196083c4a4da18df02d4b9cf6015a187f75161e824694a8b
+        image: stevenacoffman/go_spew@sha256:fc80ff3d48dd507348886d5b197b82ee94eb45914245573bfdad5fc2153027b
         env:
         - name: APP_NAME
           value: go-spew
