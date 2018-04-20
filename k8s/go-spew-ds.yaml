@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: go-spew
+  namespace: kangaroo
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: go-spew
+        logstream: go-spew
+      annotations:
+        logging.parser: json
+        fluentbit.io/parser: json
+        logging.topic: k8s-watermark
+    spec:
+      nodeSelector:
+        kubernetes.io/role: node
+      containers:
+      - name: go-spew
+        image: stevenacoffman/go_spew@sha256:906cb5de62753d531d5b55931759f88166ab22bb67f606eb5cb108006224ff09
+        env:
+        - name: APP_NAME
+          value: go-spew
+        - name: INTERVAL
+          value: "30"
+        - name: DEBUG
+          value: "false"
+        - name: NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: HOST_IP_ADDRESS
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
