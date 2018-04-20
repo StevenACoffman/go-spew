@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
       - name: go-spew
-        image: stevenacoffman/go_spew@sha256:906cb5de62753d531d5b55931759f88166ab22bb67f606eb5cb108006224ff09
+        image: stevenacoffman/go_spew@sha256:af0889dfbba33820196083c4a4da18df02d4b9cf6015a187f75161e824694a8b
         env:
         - name: APP_NAME
           value: go-spew
@@ -37,6 +37,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
         - name: HOST_IP_ADDRESS
           valueFrom:
             fieldRef:
