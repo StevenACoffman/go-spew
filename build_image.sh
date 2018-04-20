@@ -42,7 +42,7 @@ upx --brute main
 # Building with musl on alpine:
 # CC=/usr/local/musl/bin/musl-gcc go build --ldflags '-linkmode external -extldflags "-static"' main.go
 
-IMAGE_NAME=go_spew
+IMAGE_NAME=go-spew
 REPOSITORY_NAMESPACE=${1:-stevenacoffman}
 REPOSITORY="${REPOSITORY_NAMESPACE}/${IMAGE_NAME}"
 # A docker tag name must be valid ASCII and may contain lowercase and uppercase letters,
