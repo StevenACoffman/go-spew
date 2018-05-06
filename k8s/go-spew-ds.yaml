@@ -20,7 +20,7 @@ spec:
         kubernetes.io/role: node
       containers:
       - name: go-spew
-        image: stevenacoffman/go_spew@sha256:544c139abfcd064a15013c57f8daab642d2081845fea39c7bff88b483e877465
+        image: stevenacoffman/go-spew@sha256:e672fb2e86290670606a4f585f1934fbe6acfbe75e4537bd68af62a4ae0311a3
         env:
         - name: APP_NAME
           value: go-spew
